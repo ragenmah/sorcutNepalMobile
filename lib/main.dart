@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:sortcutnepal/screens/home_screen.dart';
 import 'package:sortcutnepal/screens/onboarding_screen.dart';
+import 'package:sortcutnepal/utils/exporter.dart';
 
-void main() {
+void main() async {
+  await GetStorage.init();
   runApp(const MyApp());
 }
 
@@ -18,10 +21,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/',
+      initialRoute: checkFirstAppRun() ? '/' : '/home',
       routes: {
-        '/': (context) => OnboardingScreen(),
-        '/home': (context) => HomeScreen(),
+        '/': (context) => const OnboardingScreen(),
+        '/home': (context) => const HomeScreen(),
       },
     );
   }

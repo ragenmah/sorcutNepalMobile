@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sortcutnepal/models/onbaord.dart';
 import 'package:sortcutnepal/utils/size_config.dart';
 
+import '../utils/exporter.dart';
+
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
   @override
@@ -19,6 +21,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   int _currentPage = 0;
   List colors = const [
+    Color(0xff5C75AA),
     Color(0xff5C75AA),
     Color(0xff5C75AA),
     Color(0xff5C75AA),
@@ -164,7 +167,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             if (_currentPage + 1 != contents.length)
                               TextButton(
                                 onPressed: () {
-                                  _controller.jumpToPage(2);
+                                  _controller.jumpToPage(3);
                                 },
                                 child: const Text(
                                   "SKIP",
@@ -190,14 +193,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                             ElevatedButton(
                               onPressed: () {
-                                _currentPage + 1 == contents.length
-                                    ? Navigator.pushReplacementNamed(
-                                        context, '/home')
-                                    : _controller.nextPage(
-                                        duration:
-                                            const Duration(milliseconds: 200),
-                                        curve: Curves.easeIn,
-                                      );
+                                if (_currentPage + 1 == contents.length) {
+                                  box.write('onboard', false);
+                                  Navigator.pushReplacementNamed(
+                                      context, '/home');
+                                } else {
+                                  _controller.nextPage(
+                                    duration: const Duration(milliseconds: 200),
+                                    curve: Curves.easeIn,
+                                  );
+                                }
                               },
                               child: _currentPage + 1 == contents.length
                                   ? Row(
@@ -266,27 +271,6 @@ class CustomShape extends CustomClipper<Path> {
     path.lineTo(0, height - 80);
     // path.lineTo(0, height);
     path.quadraticBezierTo(width / 2, height + 50, width, height - 80);
-    path.lineTo(width, 0);
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper oldClipper) {
-    return true;
-  }
-}
-
-class CustomShapeDown extends CustomClipper<Path> {
-  @override
-  getClip(Size size) {
-    double height = size.height;
-    double width = size.width;
-    var path = Path();
-    path.lineTo(0, height - 50);
-    path.lineTo(0, height);
-    path.quadraticBezierTo(width / 2, height + 50, width, height - 50);
     path.lineTo(width, 0);
     path.close();
 

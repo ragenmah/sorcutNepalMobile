@@ -33,7 +33,13 @@ List<OnBoardModel> contents = [
     title: "Ticketing",
     image: "assets/onboard/ticketing.png",
     iconData: Icons.class_sharp,
+    desc: "Get Your Ticket Online, Easy and Safely",
+  ),
+  OnBoardModel(
+    title: "Services",
+    image: "assets/onboard/services.png",
+    iconData: Icons.class_sharp,
     desc:
-        "Take control of notifications, collaborate live or on your own time.",
+        "Get everything from transportations, educations ,foods ,clothings to banking, or search for services and more in the world.",
   ),
 ];
