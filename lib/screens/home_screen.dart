@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:collection';
+import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -18,13 +18,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool showErrorPage = false;
+  bool showErrorPage = false, isLoading = true;
   InAppWebViewController? webViewController;
   final GlobalKey webViewKey = GlobalKey();
 
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+
+  late PullToRefreshController pullToRefreshController;
+
+  final ChromeSafariBrowser browser = new AndroidTWABrowser();
 
   @override
   void initState() {
@@ -33,6 +37,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+
+    // browser.open(
+    //     url: Uri.parse("https://www.sortcutnepal.com"),
+    //     options: ChromeSafariBrowserClassOptions(
+    //         android: AndroidChromeCustomTabsOptions(
+    //           isTrustedWebActivity: true,
+    //           enableUrlBarHiding: true,
+    //           showTitle: false,
+    //           instantAppsEnabled: false,
+    //         ),
+    //         ios: IOSSafariOptions(
+    //           barCollapsingEnabled: true,
+    //         )));
+    pullToRefreshController = PullToRefreshController(
+      options: PullToRefreshOptions(
+        color: Colors.blue,
+      ),
+      onRefresh: () async {
+        if (Platform.isAndroid) {
+          webViewController?.reload();
+        } else if (Platform.isIOS) {
+          webViewController?.loadUrl(
+              urlRequest: URLRequest(url: await webViewController?.getUrl()));
+        }
+      },
+    );
   }
 
   @override
@@ -73,32 +103,101 @@ class _HomeScreenState extends State<HomeScreen> {
     return WillPopScope(
       onWillPop: () => exitApp(context, webViewController!),
       child: Scaffold(
-        body: SafeArea(
-            child: Container(
-          child: _connectionStatus == ConnectivityResult.none
-              ? const NoInternetScreen()
-              : Stack(
-                  children: <Widget>[
-                    if (!showErrorPage)
-                      InAppWebView(
-                        key: webViewKey,
-                        initialUrlRequest: URLRequest(
-                            url: Uri.parse('https://www.sortcutnepal.com/')),
-                        onWebViewCreated: (InAppWebViewController controller) {
-                          webViewController = controller;
-                        },
-                        onLoadError: (webViewController, url, i, s) async {
-                          showError();
-                        },
-                        onLoadHttpError:
-                            (webViewController, url, int i, String s) async {
-                          // showError();
-                        },
-                      ),
-                    if (showErrorPage) const UnableToLoadScreen()
-                  ],
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Color(0xff486CCE), // Color of you choice
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.light,
+          ),
+          child: SafeArea(
+            child: Stack(
+              children: [
+                isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                        color: Color(0xff486CCE),
+                      ))
+                    : const SizedBox(),
+                Container(
+                  child: _connectionStatus == ConnectivityResult.none
+                      ? const NoInternetScreen()
+                      : Stack(
+                          children: <Widget>[
+                            if (!showErrorPage)
+                              InAppWebView(
+                                key: webViewKey,
+                                initialOptions: InAppWebViewGroupOptions(
+                                  crossPlatform: InAppWebViewOptions(
+                                    javaScriptCanOpenWindowsAutomatically: true,
+                                    useShouldOverrideUrlLoading: true,
+                                    mediaPlaybackRequiresUserGesture: true,
+                                    useOnDownloadStart: true,
+                                    allowFileAccessFromFileURLs: true,
+                                    useOnLoadResource: true,
+                                    supportZoom: false,
+                                    userAgent: 'random',
+                                    // incognito: true,
+                                  ),
+                                  android: AndroidInAppWebViewOptions(
+                                    // on Android you need to set supportMultipleWindows to true,
+                                    // otherwise the onCreateWindow event won't be called
+                                    supportMultipleWindows: true,
+                                    useHybridComposition: true,
+                                    useShouldInterceptRequest: true,
+                                    useOnRenderProcessGone: true,
+                                    mixedContentMode: AndroidMixedContentMode
+                                        .MIXED_CONTENT_ALWAYS_ALLOW,
+                                    builtInZoomControls: false,
+                                  ),
+                                ),
+                                pullToRefreshController:
+                                    pullToRefreshController,
+                                onReceivedServerTrustAuthRequest:
+                                    (controller, challenge) async {
+                                  return ServerTrustAuthResponse(
+                                      action: ServerTrustAuthResponseAction
+                                          .PROCEED);
+                                },
+                                onLoadStop: (controller, url) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                },
+                                initialUrlRequest: URLRequest(
+                                  url: Uri.parse(
+                                      'https://www.sortcutnepal.com/'),
+                                ),
+                                androidOnPermissionRequest:
+                                    (InAppWebViewController controller,
+                                        String origin,
+                                        List<String> resources) async {
+                                  return PermissionRequestResponse(
+                                    resources: resources,
+                                    action:
+                                        PermissionRequestResponseAction.GRANT,
+                                  );
+                                },
+                                onWebViewCreated:
+                                    (InAppWebViewController controller) {
+                                  webViewController = controller;
+                                },
+                                onLoadError:
+                                    (webViewController, url, i, s) async {
+                                  showError();
+                                },
+                                onLoadHttpError: (webViewController, url, int i,
+                                    String s) async {
+                                  // showError();
+                                },
+                              ),
+                            if (showErrorPage) const UnableToLoadScreen()
+                          ],
+                        ),
                 ),
-        )),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -156,5 +255,54 @@ class _HomeScreenState extends State<HomeScreen> {
               ));
       return Future.value(false);
     }
+  }
+}
+
+class MyInAppBrowser extends InAppBrowser {
+  @override
+  Future onBrowserCreated() async {
+    print("Browser Created!");
+  }
+
+  @override
+  Future onLoadStart(url) async {
+    print("Started $url");
+  }
+
+  @override
+  Future onLoadStop(url) async {
+    print("Stopped $url");
+  }
+
+  @override
+  void onLoadError(url, code, message) {
+    print("Can't load $url.. Error: $message");
+  }
+
+  @override
+  void onProgressChanged(progress) {
+    print("Progress: $progress");
+  }
+
+  @override
+  void onExit() {
+    print("Browser closed!");
+  }
+}
+
+class AndroidTWABrowser extends ChromeSafariBrowser {
+  @override
+  void onOpened() {
+    print("Android TWA browser opened");
+  }
+
+  @override
+  void onCompletedInitialLoad() {
+    print("Android TWA browser initial load completed");
+  }
+
+  @override
+  void onClosed() {
+    print("Android TWA browser closed");
   }
 }
