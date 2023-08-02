@@ -148,6 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     mixedContentMode: AndroidMixedContentMode
                                         .MIXED_CONTENT_ALWAYS_ALLOW,
                                     builtInZoomControls: false,
+                                    allowFileAccess: true,
                                   ),
                                 ),
                                 pullToRefreshController:

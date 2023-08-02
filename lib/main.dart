@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sortcutnepal/screens/home_screen.dart';
 import 'package:sortcutnepal/screens/onboarding_screen.dart';
 import 'package:sortcutnepal/utils/exporter.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
+  await Permission.camera.request();
   runApp(const MyApp());
 }
 
