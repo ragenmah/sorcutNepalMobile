@@ -26,8 +26,7 @@ List<OnBoardModel> contents = [
     title: "Rent",
     image: "assets/onboard/rental.png",
     iconData: Icons.class_sharp,
-    desc:
-        "But understanding the contributions our colleagues make to our teams and companies.",
+    desc: "Sortcut For Rental.",
   ),
   OnBoardModel(
     title: "Ticketing",

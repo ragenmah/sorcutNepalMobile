@@ -90,7 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             children: [
                               Image.asset(
                                 "assets/sortcut-logo.png",
-                                height: SizeConfig.blockV! * 4,
+                                height: SizeConfig.blockV! * 8,
                                 // 6
                               ),
                               SizedBox(

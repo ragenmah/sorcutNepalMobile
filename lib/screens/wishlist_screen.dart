@@ -11,14 +11,14 @@ import 'package:sortcutnepal/screens/message/no_internet_screen.dart';
 import 'package:sortcutnepal/screens/message/unable_load_screen.dart';
 import 'package:sortcutnepal/utils/constants.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class WishlistScreen extends StatefulWidget {
+  const WishlistScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<WishlistScreen> createState() => _WishlistScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _WishlistScreenState extends State<WishlistScreen> {
   bool showErrorPage = false, isLoading = true;
   InAppWebViewController? webViewController;
   final GlobalKey webViewKey = GlobalKey();
@@ -126,6 +126,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: <Widget>[
                             if (!showErrorPage)
                               InAppWebView(
+                                shouldOverrideUrlLoading:
+                                    (controller, navigationAction) async {
+                                  final uri = navigationAction.request.url!;
+                                  if (uri.toString() != AppConstants.homeUrl) {
+                                    return NavigationActionPolicy.ALLOW;
+                                  }
+                                  return NavigationActionPolicy.CANCEL;
+                                },
                                 key: webViewKey,
                                 initialOptions: InAppWebViewGroupOptions(
                                   crossPlatform: InAppWebViewOptions(
@@ -166,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   });
                                 },
                                 initialUrlRequest: URLRequest(
-                                  url: Uri.parse(AppConstants.homeUrl),
+                                  url: Uri.parse(AppConstants.wishlistUrl),
                                 ),
                                 androidOnPermissionRequest:
                                     (InAppWebViewController controller,
