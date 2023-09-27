@@ -166,6 +166,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   setState(() {
                                     isLoading = false;
                                   });
+                                  String yourCode =
+                                      " document.getElementsByClassName('footer-part')[0].style.display = 'none';";
+                                  // alert('JS Running')
+                                  controller
+                                      .evaluateJavascript(source: yourCode)
+                                      .then((result) {
+                                    print(result);
+                                    debugPrint(result);
+                                  });
                                 },
                                 initialUrlRequest: URLRequest(
                                   url: Uri.parse(AppConstants.homeUrl),
@@ -182,15 +191,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                                 onWebViewCreated:
                                     (InAppWebViewController controller) {
-                                  String yourCode =
-                                      " document.getElementsByClassName('footer-part')[0].style.display = 'none';";
-                                  // alert('JS Running')
-                                  controller
-                                      .evaluateJavascript(source: yourCode)
-                                      .then((result) {
-                                    print(result);
-                                    debugPrint(result);
-                                  });
+                                  // String yourCode =
+                                  //     " document.getElementsByClassName('footer-part')[0].style.display = 'none';";
+                                  // // alert('JS Running')
+                                  // controller
+                                  //     .evaluateJavascript(source: yourCode)
+                                  //     .then((result) {
+                                  //   print(result);
+                                  //   debugPrint(result);
+                                  // });
                                   webViewController = controller;
                                 },
                                 onLoadError:

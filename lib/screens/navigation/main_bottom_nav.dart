@@ -47,7 +47,8 @@ class _MainBottomNavScreenState extends State<MainBottomNavScreen> {
       bottomNavigationBar: BottomAppBar(
         color: mainColor,
         shape: const CircularNotchedRectangle(),
-        notchMargin: 10,
+        notchMargin: 5,
+
         // shadowColor: Colors.transparent,
         child: Row(
           mainAxisSize: MainAxisSize.max,

@@ -173,6 +173,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   setState(() {
                                     isLoading = false;
                                   });
+                                  String yourCode =
+                                      " document.getElementsByClassName('footer-part')[0].style.display = 'none';";
+                                  // alert('JS Running')
+                                  controller
+                                      .evaluateJavascript(source: yourCode)
+                                      .then((result) {
+                                    print(result);
+                                    debugPrint(result);
+                                  });
                                 },
                                 initialUrlRequest: URLRequest(
                                   url: Uri.parse(AppConstants.profileUrl),
