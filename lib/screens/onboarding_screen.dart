@@ -90,7 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             children: [
                               Image.asset(
                                 "assets/sortcut-logo.png",
-                                height: SizeConfig.blockV! * 4,
+                                height: SizeConfig.blockV! * 8,
                                 // 6
                               ),
                               SizedBox(
@@ -205,7 +205,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   if (_currentPage + 1 == contents.length) {
                                     box.write('onboard', false);
                                     Navigator.pushReplacementNamed(
-                                        context, '/home');
+                                        context, '/main-bottom-nav');
                                   } else {
                                     _controller.nextPage(
                                       duration:

@@ -11,14 +11,14 @@ import 'package:sortcutnepal/screens/message/no_internet_screen.dart';
 import 'package:sortcutnepal/screens/message/unable_load_screen.dart';
 import 'package:sortcutnepal/utils/constants.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   bool showErrorPage = false, isLoading = true;
   InAppWebViewController? webViewController;
   final GlobalKey webViewKey = GlobalKey();
@@ -127,6 +127,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: <Widget>[
                             if (!showErrorPage)
                               InAppWebView(
+                                shouldOverrideUrlLoading:
+                                    (controller, navigationAction) async {
+                                  final uri = navigationAction.request.url!;
+                                  if (uri.toString() != AppConstants.homeUrl) {
+                                    return NavigationActionPolicy.ALLOW;
+                                  }
+                                  return NavigationActionPolicy.CANCEL;
+                                },
                                 key: webViewKey,
                                 initialOptions: InAppWebViewGroupOptions(
                                   crossPlatform: InAppWebViewOptions(
@@ -138,7 +146,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     useOnLoadResource: true,
                                     supportZoom: false,
                                     userAgent: 'random',
-
                                     // incognito: true,
                                   ),
                                   android: AndroidInAppWebViewOptions(
@@ -168,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   });
                                 },
                                 initialUrlRequest: URLRequest(
-                                  url: Uri.parse(AppConstants.homeUrl),
+                                  url: Uri.parse(AppConstants.profileUrl),
                                 ),
                                 androidOnPermissionRequest:
                                     (InAppWebViewController controller,
@@ -182,15 +189,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                                 onWebViewCreated:
                                     (InAppWebViewController controller) {
-                                  String yourCode =
-                                      " document.getElementsByClassName('footer-part')[0].style.display = 'none';";
-                                  // alert('JS Running')
-                                  controller
-                                      .evaluateJavascript(source: yourCode)
-                                      .then((result) {
-                                    print(result);
-                                    debugPrint(result);
-                                  });
                                   webViewController = controller;
                                 },
                                 onLoadError:

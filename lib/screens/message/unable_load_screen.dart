@@ -37,7 +37,7 @@ class UnableToLoadScreen extends StatelessWidget {
             ),
             ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/home');
+                  Navigator.pushReplacementNamed(context, '/main-bottom-nav');
                 },
                 child: Text(
                   'Try Again',

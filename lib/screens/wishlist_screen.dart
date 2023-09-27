@@ -11,14 +11,14 @@ import 'package:sortcutnepal/screens/message/no_internet_screen.dart';
 import 'package:sortcutnepal/screens/message/unable_load_screen.dart';
 import 'package:sortcutnepal/utils/constants.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class WishlistScreen extends StatefulWidget {
+  const WishlistScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<WishlistScreen> createState() => _WishlistScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _WishlistScreenState extends State<WishlistScreen> {
   bool showErrorPage = false, isLoading = true;
   InAppWebViewController? webViewController;
   final GlobalKey webViewKey = GlobalKey();
@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     initConnectivity();
-
+    isLoading = true;
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
 
@@ -51,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     //         ios: IOSSafariOptions(
     //           barCollapsingEnabled: true,
     //         )));
+
     pullToRefreshController = PullToRefreshController(
       options: PullToRefreshOptions(
         color: Colors.blue,
@@ -127,6 +128,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: <Widget>[
                             if (!showErrorPage)
                               InAppWebView(
+                                shouldOverrideUrlLoading:
+                                    (controller, navigationAction) async {
+                                  final uri = navigationAction.request.url!;
+                                  if (uri.toString() != AppConstants.homeUrl) {
+                                    return NavigationActionPolicy.ALLOW;
+                                  }
+                                  return NavigationActionPolicy.CANCEL;
+                                },
                                 key: webViewKey,
                                 initialOptions: InAppWebViewGroupOptions(
                                   crossPlatform: InAppWebViewOptions(
@@ -138,7 +147,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     useOnLoadResource: true,
                                     supportZoom: false,
                                     userAgent: 'random',
-
                                     // incognito: true,
                                   ),
                                   android: AndroidInAppWebViewOptions(
@@ -168,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   });
                                 },
                                 initialUrlRequest: URLRequest(
-                                  url: Uri.parse(AppConstants.homeUrl),
+                                  url: Uri.parse(AppConstants.wishlistUrl),
                                 ),
                                 androidOnPermissionRequest:
                                     (InAppWebViewController controller,
@@ -182,15 +190,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                                 onWebViewCreated:
                                     (InAppWebViewController controller) {
-                                  String yourCode =
-                                      " document.getElementsByClassName('footer-part')[0].style.display = 'none';";
-                                  // alert('JS Running')
-                                  controller
-                                      .evaluateJavascript(source: yourCode)
-                                      .then((result) {
-                                    print(result);
-                                    debugPrint(result);
-                                  });
                                   webViewController = controller;
                                 },
                                 onLoadError:
