@@ -107,9 +107,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
       child: Scaffold(
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: const SystemUiOverlayStyle(
-            statusBarColor: Color(0xff486CCE), // Color of you choice
-            statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.light,
+            statusBarColor: Color(0xffffffff), // Color of you choice
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.dark,
           ),
           child: SafeArea(
             child: Stack(
@@ -134,9 +134,13 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                   if (uri.toString() != AppConstants.homeUrl) {
                                     return NavigationActionPolicy.ALLOW;
                                   }
+                                  setState(() {});
                                   return NavigationActionPolicy.CANCEL;
                                 },
                                 key: webViewKey,
+                                // androidOnFormResubmission: (controller, url) {
+
+                                // },
                                 initialOptions: InAppWebViewGroupOptions(
                                   crossPlatform: InAppWebViewOptions(
                                     javaScriptCanOpenWindowsAutomatically: true,
@@ -160,6 +164,8 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                         .MIXED_CONTENT_ALWAYS_ALLOW,
                                     builtInZoomControls: false,
                                     allowFileAccess: true,
+                                    domStorageEnabled: true,
+                                    databaseEnabled: true,
                                   ),
                                 ),
                                 pullToRefreshController:

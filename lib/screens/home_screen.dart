@@ -106,9 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: const SystemUiOverlayStyle(
-            statusBarColor: Color(0xff486CCE), // Color of you choice
-            statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.light,
+            statusBarColor: Color(0xffffffff), // Color of you choice
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.dark,
           ),
           child: SafeArea(
             child: Stack(
