@@ -141,6 +141,17 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                 // androidOnFormResubmission: (controller, url) {
 
                                 // },
+                                androidOnPermissionRequest:
+                                    (InAppWebViewController controller,
+                                        String origin,
+                                        List<String> resources) async {
+                                  return PermissionRequestResponse(
+                                    resources: resources,
+                                    action:
+                                        PermissionRequestResponseAction.GRANT,
+                                  );
+                                },
+
                                 initialOptions: InAppWebViewGroupOptions(
                                   crossPlatform: InAppWebViewOptions(
                                     javaScriptCanOpenWindowsAutomatically: true,
